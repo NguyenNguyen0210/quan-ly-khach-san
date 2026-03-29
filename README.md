@@ -59,13 +59,3 @@ Relationships:
 - One-to-Many (Customer → Booking)
 - One-to-Many (Booking → Invoice)
 
----
-
-## 📂 Project Structure
-src/
-├── view/
-├── controller/
-├── service/
-├── dao/
-├── entity/
-└── util/
