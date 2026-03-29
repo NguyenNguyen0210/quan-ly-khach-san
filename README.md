@@ -62,3 +62,10 @@ Relationships:
 ---
 
 ## 📂 Project Structure
+src/
+├── view/
+├── controller/
+├── service/
+├── dao/
+├── entity/
+└── util/
