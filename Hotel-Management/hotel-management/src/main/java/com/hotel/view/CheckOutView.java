@@ -90,7 +90,7 @@ public class CheckOutView extends JPanel {
         gbc.gridy = 1;
         infoPanel.add(UiStyles.createHint("Create invoice, receive payment and complete checkout."), gbc);
 
-        addField(infoPanel, gbc, 2, "Booking Id", txtBookingId);
+        addField(infoPanel, gbc, 2, "Booking Id", txtBookingId, true);
 
         gbc.gridy = 4;
         gbc.insets = new Insets(8, 8, 4, 8);
@@ -106,8 +106,8 @@ public class CheckOutView extends JPanel {
         gbc.gridy = 9;
         infoPanel.add(lblOutstanding, gbc);
 
-        addField(infoPanel, gbc, 11, "Payment Amount", txtPaymentAmount);
-        addField(infoPanel, gbc, 13, "Payment Method", paymentMethodCombo);
+        addField(infoPanel, gbc, 11, "Payment Amount", txtPaymentAmount, true);
+        addField(infoPanel, gbc, 13, "Payment Method", paymentMethodCombo, false);
 
         btnCreate = UiStyles.createButton("CREATE INVOICE", UiStyles.SUCCESS);
         btnPay = UiStyles.createButton("PAY", UiStyles.PRIMARY);
@@ -120,11 +120,15 @@ public class CheckOutView extends JPanel {
         actionPanel.add(btnCheckout);
 
         gbc.gridy = 15;
-        gbc.insets = new Insets(18, 8, 0, 8);
+        gbc.insets = new Insets(8, 8, 0, 8);
+        infoPanel.add(UiStyles.createRequiredNoteLabel(), gbc);
+
+        gbc.gridy = 16;
+        gbc.insets = new Insets(12, 8, 0, 8);
         infoPanel.add(actionPanel, gbc);
 
         lblStatus = UiStyles.createStatusLabel();
-        gbc.gridy = 16;
+        gbc.gridy = 17;
         gbc.insets = new Insets(12, 8, 0, 8);
         infoPanel.add(lblStatus, gbc);
 
@@ -191,12 +195,12 @@ public class CheckOutView extends JPanel {
         return label;
     }
 
-    private void addField(JPanel panel, GridBagConstraints gbc, int row, String label, Component component) {
+    private void addField(JPanel panel, GridBagConstraints gbc, int row, String label, Component component, boolean required) {
         gbc.gridy = row;
         gbc.gridx = 0;
         gbc.gridwidth = 2;
         gbc.insets = new Insets(8, 8, 2, 8);
-        JLabel title = UiStyles.createSectionTitle(label);
+        JLabel title = required ? UiStyles.createRequiredSectionTitle(label) : UiStyles.createSectionTitle(label);
         title.setFont(new Font("Segoe UI", Font.BOLD, 13));
         panel.add(title, gbc);
 

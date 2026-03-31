@@ -13,6 +13,7 @@ import java.awt.*;
 import java.util.List;
 
 public class CustomerView extends JPanel {
+
     private final CustomerController controller;
     private final JTextField txtName;
     private final JTextField txtPhone;
@@ -39,6 +40,7 @@ public class CustomerView extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(8, 8, 8, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
 
         txtName = new JTextField(15);
         txtPhone = new JTextField(15);
@@ -57,10 +59,10 @@ public class CustomerView extends JPanel {
         gbc.gridy = 1;
         form.add(UiStyles.createHint("Create, update and manage guest contact information."), gbc);
 
-        addField(form, gbc, 2, "Full Name", txtName);
-        addField(form, gbc, 4, "Phone", txtPhone);
-        addField(form, gbc, 6, "Email", txtEmail);
-        addField(form, gbc, 8, "ID Card", txtIdCard);
+        addField(form, gbc, 2, "Full Name", txtName, true);
+        addField(form, gbc, 4, "Phone", txtPhone, true);
+        addField(form, gbc, 6, "Email", txtEmail, false);
+        addField(form, gbc, 8, "ID Card", txtIdCard, true);
 
         btnAdd = UiStyles.createButton("ADD", UiStyles.SUCCESS);
         btnEdit = UiStyles.createButton("EDIT", UiStyles.PRIMARY);
@@ -73,15 +75,23 @@ public class CustomerView extends JPanel {
         actions.add(btnDelete);
 
         gbc.gridy = 10;
-        gbc.gridx = 0;
-        gbc.gridwidth = 2;
-        gbc.insets = new Insets(18, 8, 0, 8);
+        gbc.insets = new Insets(8, 8, 0, 8);
+        form.add(UiStyles.createRequiredNoteLabel(), gbc);
+
+        gbc.gridy = 11;
+        gbc.insets = new Insets(12, 8, 0, 8);
         form.add(actions, gbc);
 
         lblStatus = UiStyles.createStatusLabel();
-        gbc.gridy = 11;
+        gbc.gridy = 12;
         gbc.insets = new Insets(12, 8, 0, 8);
         form.add(lblStatus, gbc);
+
+        gbc.gridy = 13;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(0, 8, 0, 8);
+        form.add(Box.createVerticalGlue(), gbc);
 
         String[] cols = {"Id", "ID Card", "Name", "Phone", "Email"};
         model = new DefaultTableModel(cols, 0);
@@ -115,12 +125,12 @@ public class CustomerView extends JPanel {
         validateFormState();
     }
 
-    private void addField(JPanel panel, GridBagConstraints gbc, int row, String label, JTextField field) {
+    private void addField(JPanel panel, GridBagConstraints gbc, int row, String label, JTextField field, boolean required) {
         gbc.gridy = row;
         gbc.gridx = 0;
         gbc.gridwidth = 2;
         gbc.insets = new Insets(8, 8, 2, 8);
-        JLabel title = UiStyles.createSectionTitle(label);
+        JLabel title = required ? UiStyles.createRequiredSectionTitle(label) : UiStyles.createSectionTitle(label);
         title.setFont(new Font("Segoe UI", Font.BOLD, 13));
         panel.add(title, gbc);
 

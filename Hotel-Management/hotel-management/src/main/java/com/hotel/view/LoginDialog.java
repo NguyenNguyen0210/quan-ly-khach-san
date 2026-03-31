@@ -10,6 +10,8 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.RoundRectangle2D;
+import java.awt.image.BufferedImage;
 
 public class LoginDialog extends JDialog {
     private final EmployeeController employeeController;
@@ -31,6 +33,10 @@ public class LoginDialog extends JDialog {
         JPanel shell = new JPanel(new BorderLayout());
         shell.setBackground(UiStyles.BACKGROUND);
         shell.setBorder(BorderFactory.createEmptyBorder(18, 18, 18, 18));
+
+        // Add image panel on the left
+        JPanel imagePanel = createImagePanel();
+        shell.add(imagePanel, BorderLayout.WEST);
 
         JPanel content = UiStyles.createCardPanel(new GridBagLayout(), 24, 24, 24, 24);
         content.setPreferredSize(new Dimension(500, 410));
@@ -61,8 +67,8 @@ public class LoginDialog extends JDialog {
         gbc.gridy = 1;
         content.add(UiStyles.createHint("Sign in with an employee account to continue using the system."), gbc);
 
-        addField(content, gbc, 2, "Username", txtUsername);
-        addField(content, gbc, 4, "Password", txtPassword);
+        addField(content, gbc, 2, "Username", withIconField(txtUsername, createUserIcon()));
+        addField(content, gbc, 4, "Password", withIconField(txtPassword, createLockIcon()));
 
         gbc.gridy = 6;
         gbc.insets = new Insets(0, 8, 4, 8);
@@ -79,12 +85,16 @@ public class LoginDialog extends JDialog {
         actions.add(btnExit);
         actions.add(btnLogin);
         gbc.gridy = 8;
-        gbc.insets = new Insets(18, 8, 0, 8);
+        gbc.insets = new Insets(8, 8, 0, 8);
+        content.add(UiStyles.createRequiredNoteLabel(), gbc);
+
+        gbc.gridy = 9;
+        gbc.insets = new Insets(12, 8, 0, 8);
         content.add(actions, gbc);
 
         lblStatus = UiStyles.createStatusLabel();
         UiStyles.setStatus(lblStatus, "Enter your username and password to sign in.", UiStyles.STATUS_INFO_BG, UiStyles.MUTED);
-        gbc.gridy = 9;
+        gbc.gridy = 10;
         gbc.insets = new Insets(12, 8, 0, 8);
         content.add(lblStatus, gbc);
 
@@ -113,11 +123,58 @@ public class LoginDialog extends JDialog {
         gbc.gridx = 0;
         gbc.gridwidth = 2;
         gbc.insets = new Insets(8, 8, 2, 8);
-        panel.add(UiStyles.createSectionTitle(label), gbc);
+        panel.add(createLoginSectionTitle(label), gbc);
 
         gbc.gridy = row + 1;
         gbc.insets = new Insets(0, 8, 8, 8);
         panel.add(field, gbc);
+    }
+
+    private JLabel createLoginSectionTitle(String text) {
+        JLabel label = UiStyles.createSectionTitle(text);
+        label.setText(text + " *");
+        label.setIcon(null);
+        label.setIconTextGap(0);
+        return label;
+    }
+
+    private JComponent withIconField(JComponent field, Icon icon) {
+        JPanel wrapper = new JPanel(new BorderLayout(8, 0));
+        wrapper.setOpaque(false);
+
+        JLabel iconLabel = new JLabel(icon);
+        iconLabel.setPreferredSize(new Dimension(20, 20));
+        iconLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        iconLabel.setVerticalAlignment(SwingConstants.CENTER);
+
+        wrapper.add(iconLabel, BorderLayout.WEST);
+        wrapper.add(field, BorderLayout.CENTER);
+        return wrapper;
+    }
+
+    private Icon createUserIcon() {
+        int size = 16;
+        BufferedImage image = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = image.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setColor(UiStyles.MUTED);
+        g2.fillOval(5, 1, 6, 6);
+        g2.fill(new RoundRectangle2D.Double(3, 8, 10, 7, 7, 7));
+        g2.dispose();
+        return new ImageIcon(image);
+    }
+
+    private Icon createLockIcon() {
+        int size = 16;
+        BufferedImage image = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = image.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setColor(UiStyles.MUTED);
+        g2.setStroke(new BasicStroke(2f));
+        g2.drawRoundRect(4, 2, 8, 8, 6, 6);
+        g2.fillRoundRect(3, 8, 10, 7, 2, 2);
+        g2.dispose();
+        return new ImageIcon(image);
     }
 
     private void attachListeners() {
@@ -263,5 +320,44 @@ public class LoginDialog extends JDialog {
         } else {
             UiStyles.setStatus(lblStatus, message, UiStyles.STATUS_INFO_BG, UiStyles.MUTED);
         }
+    }
+
+    private JPanel createImagePanel() {
+        JPanel imagePanel = new JPanel(new BorderLayout());
+        imagePanel.setBackground(UiStyles.PRIMARY);
+        imagePanel.setPreferredSize(new Dimension(300, 410));
+        imagePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        try {
+            String imagePath = "../resources/images.jpeg";
+            java.net.URL imageUrl = getClass().getResource(imagePath);
+            if (imageUrl != null) {
+                ImageIcon icon = new ImageIcon(imageUrl);
+                // Scale image to fit panel
+                Image scaledImage = icon.getImage().getScaledInstance(280, 390, Image.SCALE_SMOOTH);
+                JLabel imageLabel = new JLabel(new ImageIcon(scaledImage));
+                imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                imageLabel.setVerticalAlignment(SwingConstants.CENTER);
+                imagePanel.add(imageLabel, BorderLayout.CENTER);
+            } else {
+                // Fallback: show placeholder if image not found
+                JLabel placeholderLabel = new JLabel("Hotel Image");
+                placeholderLabel.setFont(new Font("Dialog", Font.BOLD, 18));
+                placeholderLabel.setForeground(Color.WHITE);
+                placeholderLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                placeholderLabel.setVerticalAlignment(SwingConstants.CENTER);
+                imagePanel.add(placeholderLabel, BorderLayout.CENTER);
+            }
+        } catch (Exception e) {
+            // Show placeholder if there's an error
+            JLabel errorLabel = new JLabel("Image Not Found");
+            errorLabel.setFont(new Font("Dialog", Font.BOLD, 14));
+            errorLabel.setForeground(Color.WHITE);
+            errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            errorLabel.setVerticalAlignment(SwingConstants.CENTER);
+            imagePanel.add(errorLabel, BorderLayout.CENTER);
+        }
+
+        return imagePanel;
     }
 }

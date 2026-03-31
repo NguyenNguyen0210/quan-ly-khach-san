@@ -11,6 +11,7 @@ import java.awt.*;
 import java.util.List;
 
 public class ServiceView extends JPanel {
+
     private final ServiceCatalogController controller;
     private final JTextField txtName;
     private final JTextField txtPrice;
@@ -35,6 +36,7 @@ public class ServiceView extends JPanel {
         leftPanel.setPreferredSize(new Dimension(360, 0));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.insets = new Insets(8, 8, 8, 8);
 
         txtName = new JTextField(15);
@@ -47,14 +49,16 @@ public class ServiceView extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
+        gbc.insets = new Insets(8, 14, 8, 14);
         leftPanel.add(UiStyles.createTitle("Service"), gbc);
 
         gbc.gridy = 1;
+        gbc.insets = new Insets(8, 14, 8, 14);
         leftPanel.add(UiStyles.createHint("Manage service catalog, price and available quantity."), gbc);
 
-        addField(leftPanel, gbc, 2, "Service Name", txtName);
-        addField(leftPanel, gbc, 4, "Price", txtPrice);
-        addField(leftPanel, gbc, 6, "Quantity", txtQuantity);
+        addField(leftPanel, gbc, 2, "Service Name", txtName, true);
+        addField(leftPanel, gbc, 4, "Price", txtPrice, true);
+        addField(leftPanel, gbc, 6, "Quantity", txtQuantity, true);
 
         btnAdd = UiStyles.createButton("ADD", UiStyles.SUCCESS);
         btnEdit = UiStyles.createButton("EDIT", UiStyles.PRIMARY);
@@ -67,13 +71,23 @@ public class ServiceView extends JPanel {
         btnPanel.add(btnDelete);
 
         gbc.gridy = 8;
-        gbc.insets = new Insets(18, 8, 0, 8);
+        gbc.insets = new Insets(8, 14, 0, 14);
+        leftPanel.add(UiStyles.createRequiredNoteLabel(), gbc);
+
+        gbc.gridy = 9;
+        gbc.insets = new Insets(12, 8, 0, 8);
         leftPanel.add(btnPanel, gbc);
 
         lblStatus = UiStyles.createStatusLabel();
-        gbc.gridy = 9;
+        gbc.gridy = 10;
         gbc.insets = new Insets(12, 8, 0, 8);
         leftPanel.add(lblStatus, gbc);
+
+        gbc.gridy = 11;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(0, 8, 0, 8);
+        leftPanel.add(Box.createVerticalGlue(), gbc);
 
         String[] columns = {"Id", "Service Name", "Price", "Quantity"};
         model = new DefaultTableModel(columns, 0);
@@ -104,17 +118,17 @@ public class ServiceView extends JPanel {
         validateFormState();
     }
 
-    private void addField(JPanel panel, GridBagConstraints gbc, int row, String label, JTextField field) {
+    private void addField(JPanel panel, GridBagConstraints gbc, int row, String label, JTextField field, boolean required) {
         gbc.gridy = row;
         gbc.gridx = 0;
         gbc.gridwidth = 2;
-        gbc.insets = new Insets(8, 8, 2, 8);
-        JLabel title = UiStyles.createSectionTitle(label);
+        gbc.insets = new Insets(8, 14, 2, 14);
+        JLabel title = required ? UiStyles.createRequiredSectionTitle(label) : UiStyles.createSectionTitle(label);
         title.setFont(new Font("Segoe UI", Font.BOLD, 13));
         panel.add(title, gbc);
 
         gbc.gridy = row + 1;
-        gbc.insets = new Insets(0, 8, 8, 8);
+        gbc.insets = new Insets(0, 14, 8, 14);
         panel.add(field, gbc);
     }
 

@@ -13,6 +13,7 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -97,11 +98,19 @@ public class RoomPanel extends JPanel {
         lblId.setFont(new Font("Segoe UI", Font.BOLD, 22));
         lblId.setForeground(UiStyles.TEXT);
 
+        JLabel roomIconLabel = new JLabel(createRoomIcon());
+        roomIconLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 8));
+
+        JPanel roomHeader = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        roomHeader.setOpaque(false);
+        roomHeader.add(roomIconLabel);
+        roomHeader.add(lblId);
+
         JLabel statusBadge = createStatusBadge(resolveStatusText(room), color);
 
         JPanel top = new JPanel(new BorderLayout());
         top.setOpaque(false);
-        top.add(lblId, BorderLayout.WEST);
+        top.add(roomHeader, BorderLayout.WEST);
         top.add(statusBadge, BorderLayout.EAST);
 
         JPanel infoPanel = new JPanel(new GridLayout(0, 1, 0, 8));
@@ -151,7 +160,6 @@ public class RoomPanel extends JPanel {
         int available = 0;
         int booked = 0;
         int occupied = 0;
-        int maintenance = 0;
 
         if (rooms != null) {
             for (Room room : rooms) {
@@ -167,23 +175,23 @@ public class RoomPanel extends JPanel {
                     }
                 }
                 if ("MAINTENANCE".equalsIgnoreCase(room.getStatus())) {
-                    maintenance++;
+                    continue;
                 } else {
                     available++;
                 }
             }
         }
 
-        summaryPanel.add(createSummaryCard("Total Rooms", String.valueOf(total), UiStyles.PRIMARY, new Color(232, 240, 254)));
-        summaryPanel.add(createSummaryCard("Available", String.valueOf(available), UiStyles.SUCCESS, new Color(228, 245, 234)));
-        summaryPanel.add(createSummaryCard("Booked", String.valueOf(booked), UiStyles.WARNING, new Color(255, 246, 224)));
-        summaryPanel.add(createSummaryCard("Occupied", String.valueOf(occupied), UiStyles.DANGER, new Color(252, 232, 230)));
+        summaryPanel.add(createSummaryCard("Total Rooms", String.valueOf(total), UiStyles.PRIMARY, new Color(232, 240, 254), "total"));
+        summaryPanel.add(createSummaryCard("Available", String.valueOf(available), UiStyles.SUCCESS, new Color(228, 245, 234), "available"));
+        summaryPanel.add(createSummaryCard("Booked", String.valueOf(booked), UiStyles.WARNING, new Color(255, 246, 224), "booked"));
+        summaryPanel.add(createSummaryCard("Occupied", String.valueOf(occupied), UiStyles.DANGER, new Color(252, 232, 230), "occupied"));
 
         summaryPanel.revalidate();
         summaryPanel.repaint();
     }
 
-    private JPanel createSummaryCard(String title, String value, Color accent, Color background) {
+    private JPanel createSummaryCard(String title, String value, Color accent, Color background, String type) {
         JPanel card = new JPanel(new BorderLayout(0, 6));
         card.setOpaque(true);
         card.setBackground(background);
@@ -192,17 +200,53 @@ public class RoomPanel extends JPanel {
                 BorderFactory.createEmptyBorder(14, 16, 14, 16)
         ));
 
+        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 0));
+        titlePanel.setOpaque(false);
+
+        JLabel iconLabel = new JLabel(createSummaryIcon(type, accent));
         JLabel titleLabel = new JLabel(title);
         titleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         titleLabel.setForeground(UiStyles.MUTED);
+        titlePanel.add(iconLabel);
+        titlePanel.add(titleLabel);
 
         JLabel valueLabel = new JLabel(value);
         valueLabel.setFont(new Font("Segoe UI", Font.BOLD, 26));
         valueLabel.setForeground(accent);
 
-        card.add(titleLabel, BorderLayout.NORTH);
+        card.add(titlePanel, BorderLayout.NORTH);
         card.add(valueLabel, BorderLayout.CENTER);
         return card;
+    }
+
+    private Icon createSummaryIcon(String type, Color color) {
+        int size = 14;
+        BufferedImage image = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = image.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setColor(color);
+
+        if ("available".equals(type)) {
+            g2.setStroke(new BasicStroke(2f));
+            g2.drawOval(2, 2, 10, 10);
+            g2.drawLine(4, 7, 6, 9);
+            g2.drawLine(6, 9, 10, 5);
+        } else if ("booked".equals(type)) {
+            g2.fillRoundRect(2, 3, 10, 8, 2, 2);
+            g2.setColor(Color.WHITE);
+            g2.fillRect(4, 5, 6, 2);
+            g2.fillRect(4, 8, 4, 1);
+        } else if ("occupied".equals(type)) {
+            g2.fillOval(4, 2, 6, 6);
+            g2.fillRoundRect(3, 8, 8, 4, 3, 3);
+        } else {
+            g2.fillRoundRect(2, 6, 10, 5, 2, 2);
+            g2.fillRoundRect(3, 3, 3, 3, 1, 1);
+            g2.fillRoundRect(8, 3, 3, 3, 1, 1);
+        }
+
+        g2.dispose();
+        return new ImageIcon(image);
     }
 
     private JLabel createStatusBadge(String text, Color background) {
@@ -231,6 +275,23 @@ public class RoomPanel extends JPanel {
         row.add(labelComp, BorderLayout.WEST);
         row.add(valueComp, BorderLayout.CENTER);
         return row;
+    }
+
+    private Icon createRoomIcon() {
+        int size = 20;
+        BufferedImage image = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = image.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        g2.setColor(UiStyles.PRIMARY);
+        g2.fillRoundRect(2, 8, 16, 8, 3, 3);
+        g2.fillRoundRect(3, 5, 4, 4, 2, 2);
+        g2.fillRoundRect(13, 5, 4, 4, 2, 2);
+        g2.fillRect(3, 15, 2, 3);
+        g2.fillRect(15, 15, 2, 3);
+
+        g2.dispose();
+        return new ImageIcon(image);
     }
 
     private String resolveGuestName(Booking booking) {

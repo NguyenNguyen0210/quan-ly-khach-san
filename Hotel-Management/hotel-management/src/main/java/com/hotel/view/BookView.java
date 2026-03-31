@@ -131,27 +131,31 @@ public class BookView extends JPanel {
         gbc.gridy = 1;
         leftPanel.add(UiStyles.createHint("Create a reservation and assign an available room."), gbc);
 
-        addField(leftPanel, gbc, 2, "Customer Name", txtName);
+        addField(leftPanel, gbc, 2, "Customer Name", txtName, true);
         addSuggestionArea(leftPanel, gbc, 4, nameSuggestionHost);
-        addField(leftPanel, gbc, 6, "Phone", txtPhone);
+        addField(leftPanel, gbc, 6, "Phone", txtPhone, true);
         addSuggestionArea(leftPanel, gbc, 8, phoneSuggestionHost);
-        addField(leftPanel, gbc, 10, "ID Card", txtIdCard);
-        addField(leftPanel, gbc, 12, "Email", txtEmail);
-        addField(leftPanel, gbc, 14, "Check-in date", txtCheckIn);
-        addField(leftPanel, gbc, 16, "Check-out date", txtCheckOut);
-        addField(leftPanel, gbc, 18, "Room", roomCombo);
+        addField(leftPanel, gbc, 10, "ID Card", txtIdCard, true);
+        addField(leftPanel, gbc, 12, "Email", txtEmail, false);
+        addField(leftPanel, gbc, 14, "Check-in date", txtCheckIn, true);
+        addField(leftPanel, gbc, 16, "Check-out date", txtCheckOut, true);
+        addField(leftPanel, gbc, 18, "Room", roomCombo, true);
 
         btnAdd = UiStyles.createButton("ADD BOOKING", UiStyles.SUCCESS);
 
         gbc.gridx = 0;
         gbc.gridy = 20;
         gbc.gridwidth = 2;
-        gbc.insets = new Insets(18, 8, 0, 8);
+        gbc.insets = new Insets(8, 8, 0, 8);
+        leftPanel.add(UiStyles.createRequiredNoteLabel(), gbc);
+
+        gbc.gridy = 21;
+        gbc.insets = new Insets(12, 8, 0, 8);
         gbc.anchor = GridBagConstraints.NORTHWEST;
         leftPanel.add(btnAdd, gbc);
 
         lblStatus = UiStyles.createStatusLabel();
-        gbc.gridy = 21;
+        gbc.gridy = 22;
         gbc.insets = new Insets(12, 8, 0, 8);
         leftPanel.add(lblStatus, gbc);
 
@@ -178,12 +182,12 @@ public class BookView extends JPanel {
         validateForm();
     }
 
-    private void addField(JPanel panel, GridBagConstraints gbc, int row, String label, Component component) {
+    private void addField(JPanel panel, GridBagConstraints gbc, int row, String label, Component component, boolean required) {
         gbc.gridy = row;
         gbc.gridx = 0;
         gbc.gridwidth = 2;
         gbc.insets = new Insets(8, 8, 2, 8);
-        JLabel title = UiStyles.createSectionTitle(label);
+        JLabel title = required ? UiStyles.createRequiredSectionTitle(label) : UiStyles.createSectionTitle(label);
         title.setFont(new Font("Segoe UI", Font.BOLD, 13));
         panel.add(title, gbc);
 

@@ -72,9 +72,9 @@ public class RoomManagementView extends JPanel {
         gbc.gridwidth = 2;
         form.add(UiStyles.createSectionTitle("Room Types"), gbc);
 
-        addField(form, gbc, 1, "Name", txtRoomTypeName);
-        addField(form, gbc, 3, "Price / Night", txtRoomTypePrice);
-        addField(form, gbc, 5, "Description", txtRoomTypeDescription);
+        addField(form, gbc, 1, "Name", txtRoomTypeName, true);
+        addField(form, gbc, 3, "Price / Night", txtRoomTypePrice, true);
+        addField(form, gbc, 5, "Description", txtRoomTypeDescription, false);
 
         JButton btnAdd = UiStyles.createButton("ADD TYPE", UiStyles.SUCCESS);
         JButton btnEdit = UiStyles.createButton("EDIT TYPE", UiStyles.PRIMARY);
@@ -87,6 +87,11 @@ public class RoomManagementView extends JPanel {
         actionPanel.add(btnDelete);
 
         gbc.gridy = 7;
+        gbc.insets = new Insets(8, 8, 0, 8);
+        form.add(UiStyles.createRequiredNoteLabel(), gbc);
+
+        gbc.gridy = 8;
+        gbc.insets = new Insets(12, 8, 0, 8);
         form.add(actionPanel, gbc);
 
         roomTypeTableModel = new DefaultTableModel(new String[]{"Id", "Name", "Price", "Description"}, 0);
@@ -133,9 +138,9 @@ public class RoomManagementView extends JPanel {
         gbc.gridwidth = 2;
         form.add(UiStyles.createSectionTitle("Rooms"), gbc);
 
-        addField(form, gbc, 1, "Room Number", txtRoomNumber);
-        addField(form, gbc, 3, "Room Type", roomTypeCombo);
-        addField(form, gbc, 5, "Status", roomStatusCombo);
+        addField(form, gbc, 1, "Room Number", txtRoomNumber, true);
+        addField(form, gbc, 3, "Room Type", roomTypeCombo, true);
+        addField(form, gbc, 5, "Status", roomStatusCombo, false);
 
         JButton btnAdd = UiStyles.createButton("ADD ROOM", UiStyles.SUCCESS);
         JButton btnEdit = UiStyles.createButton("EDIT ROOM", UiStyles.PRIMARY);
@@ -148,6 +153,11 @@ public class RoomManagementView extends JPanel {
         actionPanel.add(btnDelete);
 
         gbc.gridy = 7;
+        gbc.insets = new Insets(8, 8, 0, 8);
+        form.add(UiStyles.createRequiredNoteLabel(), gbc);
+
+        gbc.gridy = 8;
+        gbc.insets = new Insets(12, 8, 0, 8);
         form.add(actionPanel, gbc);
 
         roomTableModel = new DefaultTableModel(new String[]{"Id", "Room Number", "Type", "Status"}, 0);
@@ -173,12 +183,12 @@ public class RoomManagementView extends JPanel {
         return panel;
     }
 
-    private void addField(JPanel panel, GridBagConstraints gbc, int row, String label, Component component) {
+    private void addField(JPanel panel, GridBagConstraints gbc, int row, String label, Component component, boolean required) {
         gbc.gridy = row;
         gbc.gridx = 0;
         gbc.gridwidth = 2;
         gbc.insets = new Insets(8, 8, 2, 8);
-        JLabel title = UiStyles.createSectionTitle(label);
+        JLabel title = required ? UiStyles.createRequiredSectionTitle(label) : UiStyles.createSectionTitle(label);
         title.setFont(new Font("Segoe UI", Font.BOLD, 13));
         panel.add(title, gbc);
 

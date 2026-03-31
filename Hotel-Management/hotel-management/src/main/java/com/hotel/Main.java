@@ -79,6 +79,8 @@ public class Main extends JFrame {
         String[] menuItems = {"Home", "Book", "Rooms", "Service", "Customer", "Employee", "Invoices"};
         for (String item : menuItems) {
             JButton btn = createNavButton(item);
+            btn.setIcon(UiStyles.resolveMenuIcon(item));
+            btn.setIconTextGap(8);
             String cardName = item.toUpperCase();
             navButtons.put(cardName, btn);
             btn.addActionListener(e -> showCard(cardName));
@@ -115,6 +117,8 @@ public class Main extends JFrame {
         accountPanel.setOpaque(false);
         currentUserLabel = UiStyles.createHint("");
         JButton btnLogout = createNavButton("Logout");
+        btnLogout.setIcon(UiStyles.resolveMenuIcon("Logout"));
+        btnLogout.setIconTextGap(8);
         btnLogout.addActionListener(e -> handleLogout());
         accountPanel.add(currentUserLabel);
         accountPanel.add(btnLogout);
@@ -150,6 +154,7 @@ public class Main extends JFrame {
                 BorderFactory.createEmptyBorder(9, 16, 9, 16)
         ));
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        UiStyles.installButtonDisabledStyle(btn, UiStyles.PANEL_ALT, UiStyles.TEXT);
         return btn;
     }
 

@@ -64,23 +64,27 @@ public class AddServiceView extends JPanel {
         gbc.gridy = 1;
         inputPanel.add(UiStyles.createHint("Attach services to the selected booking and review current usage."), gbc);
 
-        addField(inputPanel, gbc, 2, "Booking Id", txtBookingId);
+        addField(inputPanel, gbc, 2, "Booking Id", txtBookingId, true);
 
         gbc.gridy = 4;
         gbc.insets = new Insets(4, 8, 8, 8);
         inputPanel.add(lblRoomNumber, gbc);
 
-        addField(inputPanel, gbc, 6, "Service", serviceCombo);
-        addField(inputPanel, gbc, 8, "Quantity", txtQuantity);
+        addField(inputPanel, gbc, 6, "Service", serviceCombo, true);
+        addField(inputPanel, gbc, 8, "Quantity", txtQuantity, true);
 
         btnAdd = UiStyles.createButton("ADD SERVICE", UiStyles.PRIMARY);
 
         gbc.gridy = 10;
-        gbc.insets = new Insets(18, 8, 0, 8);
+        gbc.insets = new Insets(8, 8, 0, 8);
+        inputPanel.add(UiStyles.createRequiredNoteLabel(), gbc);
+
+        gbc.gridy = 11;
+        gbc.insets = new Insets(12, 8, 0, 8);
         inputPanel.add(btnAdd, gbc);
 
         lblStatus = UiStyles.createStatusLabel();
-        gbc.gridy = 11;
+        gbc.gridy = 12;
         gbc.insets = new Insets(12, 8, 0, 8);
         inputPanel.add(lblStatus, gbc);
 
@@ -106,12 +110,12 @@ public class AddServiceView extends JPanel {
         validateForm();
     }
 
-    private void addField(JPanel panel, GridBagConstraints gbc, int row, String label, Component component) {
+    private void addField(JPanel panel, GridBagConstraints gbc, int row, String label, Component component, boolean required) {
         gbc.gridy = row;
         gbc.gridx = 0;
         gbc.gridwidth = 2;
         gbc.insets = new Insets(8, 8, 2, 8);
-        JLabel title = UiStyles.createSectionTitle(label);
+        JLabel title = required ? UiStyles.createRequiredSectionTitle(label) : UiStyles.createSectionTitle(label);
         title.setFont(new Font("Segoe UI", Font.BOLD, 13));
         panel.add(title, gbc);
 
