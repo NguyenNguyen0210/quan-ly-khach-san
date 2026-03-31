@@ -22,3 +22,9 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+.DS_Store
+Hotel-Management/.DS_Store
+Hotel-Management/hotel-management/.DS_Store
+Hotel-Management/hotel-management/src/.DS_Store
+Hotel-Management/hotel-management/src/main/java/com/hotel/.DS_Store
+Hotel-Management/hotel-management/target/classes/com/hotel/.DS_Store
