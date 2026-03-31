@@ -1,4 +1,4 @@
-package com.hotel.view;
+﻿package com.hotel.view;
 
 import com.hotel.controller.ServiceCatalogController;
 import com.hotel.entity.Service;
