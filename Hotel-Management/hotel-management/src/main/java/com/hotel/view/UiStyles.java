@@ -95,7 +95,10 @@ public final class UiStyles {
         button.setBackground(background);
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        button.setOpaque(true);
+        button.setContentAreaFilled(true);
+        button.setBorderPainted(true);
+        button.setFont(new Font("Dialog", Font.BOLD, 13));
         button.setBorder(new EmptyBorder(10, 18, 10, 18));
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return button;

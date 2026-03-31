@@ -138,8 +138,11 @@ public class Main extends JFrame {
 
     private JButton createNavButton(String text) {
         JButton btn = new JButton(text);
-        btn.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btn.setFont(new Font("Dialog", Font.BOLD, 13));
         btn.setFocusPainted(false);
+        btn.setOpaque(true);
+        btn.setContentAreaFilled(true);
+        btn.setBorderPainted(true);
         btn.setBackground(UiStyles.PANEL_ALT);
         btn.setForeground(UiStyles.TEXT);
         btn.setBorder(BorderFactory.createCompoundBorder(
