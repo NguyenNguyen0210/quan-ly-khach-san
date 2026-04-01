@@ -8,7 +8,13 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Locale;
 
 public final class UiStyles {
@@ -27,6 +33,7 @@ public final class UiStyles {
     public static final Color STATUS_SUCCESS_BG = new Color(228, 245, 234);
     public static final Color STATUS_WARNING_BG = new Color(255, 246, 224);
     public static final Color STATUS_ERROR_BG = new Color(252, 232, 230);
+    private static final DateTimeFormatter DATE_PICKER_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
     private static final Icon SECTION_TITLE_ICON_DEFAULT = createInfoIcon();
     private static final Icon SECTION_TITLE_ICON_USER = createUserIcon();
     private static final Icon SECTION_TITLE_ICON_PASSWORD = createLockIcon();
@@ -374,6 +381,19 @@ public final class UiStyles {
         field.setCaretColor(TEXT);
     }
 
+    public static void enableDatePicker(JTextField field) {
+        field.setEditable(false);
+        field.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        field.setToolTipText("Click to pick a date");
+        DatePickerPopup popup = new DatePickerPopup(field);
+        field.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                popup.show();
+            }
+        });
+    }
+
     public static void styleComboBox(JComboBox<?> comboBox) {
         comboBox.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         comboBox.setBackground(Color.WHITE);
@@ -500,5 +520,131 @@ public final class UiStyles {
                 new LineBorder(DANGER, 1, true),
                 new EmptyBorder(6, 10, 6, 10)
         );
+    }
+
+    private static final class DatePickerPopup {
+        private final JTextField target;
+        private final JPopupMenu popup;
+        private final JLabel monthLabel;
+        private final JPanel daysPanel;
+        private YearMonth displayedMonth;
+        private LocalDate selectedDate;
+
+        private DatePickerPopup(JTextField target) {
+            this.target = target;
+            this.popup = new JPopupMenu();
+            this.monthLabel = new JLabel("", SwingConstants.CENTER);
+            this.daysPanel = new JPanel(new GridLayout(0, 7, 2, 2));
+
+            JPanel root = new JPanel(new BorderLayout(8, 8));
+            root.setBorder(new EmptyBorder(8, 8, 8, 8));
+            root.setBackground(Color.WHITE);
+
+            JButton prev = createCalendarHeaderButton("<");
+            JButton next = createCalendarHeaderButton(">");
+            prev.addActionListener(e -> {
+                displayedMonth = displayedMonth.minusMonths(1);
+                refreshCalendar();
+            });
+            next.addActionListener(e -> {
+                displayedMonth = displayedMonth.plusMonths(1);
+                refreshCalendar();
+            });
+
+            monthLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
+            monthLabel.setForeground(TEXT);
+
+            JPanel header = new JPanel(new BorderLayout(8, 0));
+            header.setOpaque(false);
+            header.add(prev, BorderLayout.WEST);
+            header.add(monthLabel, BorderLayout.CENTER);
+            header.add(next, BorderLayout.EAST);
+
+            daysPanel.setOpaque(false);
+
+            root.add(header, BorderLayout.NORTH);
+            root.add(daysPanel, BorderLayout.CENTER);
+
+            popup.setBorder(BorderFactory.createLineBorder(BORDER, 1, true));
+            popup.add(root);
+        }
+
+        private void show() {
+            selectedDate = parseDate(target.getText().trim());
+            displayedMonth = selectedDate != null ? YearMonth.from(selectedDate) : YearMonth.now();
+            refreshCalendar();
+            popup.show(target, 0, target.getHeight());
+        }
+
+        private void refreshCalendar() {
+            monthLabel.setText(displayedMonth.getMonth().name().substring(0, 1)
+                    + displayedMonth.getMonth().name().substring(1).toLowerCase(Locale.ROOT)
+                    + " "
+                    + displayedMonth.getYear());
+
+            daysPanel.removeAll();
+            String[] weekdayNames = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
+            for (String name : weekdayNames) {
+                JLabel weekday = new JLabel(name, SwingConstants.CENTER);
+                weekday.setFont(new Font("Segoe UI", Font.BOLD, 11));
+                weekday.setForeground(MUTED);
+                daysPanel.add(weekday);
+            }
+
+            int firstDayOffset = displayedMonth.atDay(1).getDayOfWeek().getValue() - 1;
+            for (int i = 0; i < firstDayOffset; i++) {
+                daysPanel.add(new JLabel(""));
+            }
+
+            int lengthOfMonth = displayedMonth.lengthOfMonth();
+            for (int day = 1; day <= lengthOfMonth; day++) {
+                LocalDate date = displayedMonth.atDay(day);
+                JButton dayButton = new JButton(String.valueOf(day));
+                dayButton.setFocusPainted(false);
+                dayButton.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+                dayButton.setOpaque(true);
+                dayButton.setContentAreaFilled(true);
+                dayButton.setBorderPainted(true);
+                dayButton.setBorder(BorderFactory.createLineBorder(BORDER, 1, true));
+                dayButton.setBackground(Color.WHITE);
+                dayButton.setForeground(TEXT);
+
+                if (selectedDate != null && selectedDate.equals(date)) {
+                    dayButton.setBackground(PRIMARY);
+                    dayButton.setForeground(Color.WHITE);
+                }
+
+                dayButton.addActionListener(e -> {
+                    target.setText(date.format(DATE_PICKER_FORMATTER));
+                    popup.setVisible(false);
+                });
+                daysPanel.add(dayButton);
+            }
+
+            daysPanel.revalidate();
+            daysPanel.repaint();
+            popup.pack();
+        }
+
+        private JButton createCalendarHeaderButton(String text) {
+            JButton button = new JButton(text);
+            button.setFocusPainted(false);
+            button.setBorder(BorderFactory.createLineBorder(BORDER, 1, true));
+            button.setBackground(PANEL_ALT);
+            button.setForeground(TEXT);
+            button.setFont(new Font("Dialog", Font.BOLD, 12));
+            return button;
+        }
+
+        private LocalDate parseDate(String value) {
+            if (value == null || value.isBlank()) {
+                return null;
+            }
+            try {
+                return LocalDate.parse(value, DATE_PICKER_FORMATTER);
+            } catch (DateTimeParseException ex) {
+                return null;
+            }
+        }
     }
 }

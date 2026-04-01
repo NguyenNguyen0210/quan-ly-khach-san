@@ -53,13 +53,15 @@ public class InvoiceReportView extends JPanel {
         txtToDate = new JTextField(12);
         UiStyles.styleTextField(txtFromDate);
         UiStyles.styleTextField(txtToDate);
+        UiStyles.enableDatePicker(txtFromDate);
+        UiStyles.enableDatePicker(txtToDate);
 
         JButton btnFilter = UiStyles.createButton("FILTER", UiStyles.PRIMARY);
         JButton btnReset = UiStyles.createButton("RESET", UiStyles.SUCCESS);
         JButton btnView = UiStyles.createButton("VIEW DETAIL", UiStyles.DANGER);
 
-        addField(filterPanel, gbc, 0, "From Date (yyyy-MM-dd)", txtFromDate);
-        addField(filterPanel, gbc, 2, "To Date (yyyy-MM-dd)", txtToDate);
+        addField(filterPanel, gbc, 0, "From Date", txtFromDate);
+        addField(filterPanel, gbc, 2, "To Date", txtToDate);
 
         gbc.gridy = 4;
         gbc.gridx = 0;

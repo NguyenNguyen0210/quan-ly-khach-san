@@ -89,6 +89,8 @@ public class BookView extends JPanel {
         UiStyles.styleTextField(txtEmail);
         UiStyles.styleTextField(txtCheckIn);
         UiStyles.styleTextField(txtCheckOut);
+        UiStyles.enableDatePicker(txtCheckIn);
+        UiStyles.enableDatePicker(txtCheckOut);
         UiStyles.styleComboBox(roomCombo);
         lockFieldSize(txtName);
         lockFieldSize(txtPhone);
